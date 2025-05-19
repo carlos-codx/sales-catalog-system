@@ -3,12 +3,14 @@ import dotenv from 'dotenv';
 import { sequelize } from './utils/database';
 import { runMigrationsAndSeeders } from './utils/migrator';
 import productRoutes from './routes/product.routes';
+import clientRoutes from './routes/client.routes';
 
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use('/api/products', productRoutes);
+app.use('/api/clients', clientRoutes);
 
 const startServer = async () => {
   try {
