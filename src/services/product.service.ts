@@ -38,4 +38,8 @@ export class ProductService {
     return await this.productRepo.softDelete(id);
   }
 
+  async getProductById(id: number) {
+    return await this.productRepo.findById(id);
+  }
+
 }

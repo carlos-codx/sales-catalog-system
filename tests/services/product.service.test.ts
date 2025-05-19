@@ -93,6 +93,25 @@ describe('ProductService', () => {
     expect(mockRepo.softDelete).toHaveBeenCalledWith(999);
     expect(result).toBe(false);
   });
+    
+  it('should get a product by id', async () => {
+    const mockProduct = { id: 123, name: 'Producto por ID' };
+    mockRepo.findById.mockResolvedValue(mockProduct as any);
+
+    const result = await service.getProductById(123);
+
+    expect(mockRepo.findById).toHaveBeenCalledWith(123);
+    expect(result).toEqual(mockProduct);
+  });
+
+  it('should return null if product not found by id', async () => {
+    mockRepo.findById.mockResolvedValue(null);
+
+    const result = await service.getProductById(999);
+
+    expect(mockRepo.findById).toHaveBeenCalledWith(999);
+    expect(result).toBeNull();
+  });
 
 
 });

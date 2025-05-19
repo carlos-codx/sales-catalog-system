@@ -149,3 +149,41 @@ export const deleteProduct = async (req: Request, res: Response): Promise<void> 
     });
   }
 };
+
+export const getProductById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id);
+    const product = await productService.getProductById(id);
+    if (!product) {
+      res.status(404).json({
+        message: 'No se ha encontrado el producto',
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: 'Producto obtenido correctamente',
+      status: 200,
+      error: false,
+      result: {
+        id: product.id,
+        code: product.code,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        unitId: product.unitId,
+        unitName: product.unit?.name,
+      },
+    });
+
+  } catch (error) {
+    console.error('Error al obtener el producto:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al obtener el producto',
+      status: 500,
+      error: true,
+    });
+  }
+};

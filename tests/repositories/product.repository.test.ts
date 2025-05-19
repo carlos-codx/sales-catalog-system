@@ -119,5 +119,37 @@ describe('ProductRepository', () => {
     expect(result).toBe(false);
   });
 
+  it('should find a product by id including unit', async () => {
+    const mockProduct = {
+      id: 1,
+      name: 'Producto con Unidad',
+      unit: { id: 10, name: 'kg' }
+    };
+
+    (Product.findOne as jest.Mock).mockResolvedValue(mockProduct);
+
+    const result = await repo.findById(1);
+
+    expect(Product.findOne).toHaveBeenCalledWith({
+      where: { id: 1 },
+      include: [{ model: expect.any(Function), as: 'unit' }]
+    });
+
+    expect(result).toEqual(mockProduct);
+  });
+
+  it('should return null if product not found by id', async () => {
+    (Product.findOne as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.findById(999);
+
+    expect(Product.findOne).toHaveBeenCalledWith({
+      where: { id: 999 },
+      include: [{ model: expect.any(Function), as: 'unit' }]
+    });
+
+    expect(result).toBeNull();
+  });
+
 
 });

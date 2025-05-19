@@ -49,4 +49,17 @@ export class ProductRepository {
     return true;
   }
 
+  async findById(id: number): Promise<Product | null> {
+    const product = await Product.findOne({
+      where: { id },
+      include: [{ model: Unit, as: 'unit' }],
+    });
+
+    if (!product) {
+      return null;
+    }
+
+    return product;
+  }
+
 }
