@@ -62,4 +62,11 @@ export class ProductRepository {
     return product;
   }
 
+  async findManyByIds(ids: number[]): Promise<Product[]> {
+    return await Product.findAll({
+      where: { id: { [Op.in]: ids } },
+      include: [{ model: Unit, as: 'unit' }],
+    });
+  }
+
 }

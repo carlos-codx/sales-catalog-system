@@ -151,5 +151,24 @@ describe('ProductRepository', () => {
     expect(result).toBeNull();
   });
 
+  it('should find many products by ids with unit included', async () => {
+    const ids = [1, 2, 3];
+    const mockProducts = [
+      { id: 1, name: 'P1' },
+      { id: 2, name: 'P2' },
+    ];
+
+    (Product.findAll as jest.Mock).mockResolvedValue(mockProducts);
+
+    const result = await repo.findManyByIds(ids);
+
+    expect(Product.findAll).toHaveBeenCalledWith({
+      where: { id: { [Op.in]: ids } },
+      include: [{ model: expect.any(Function), as: 'unit' }],
+    });
+
+    expect(result).toEqual(mockProducts);
+  });
+
 
 });
