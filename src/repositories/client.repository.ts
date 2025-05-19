@@ -30,4 +30,23 @@ export class ClientRepository {
 
   }
 
+  async update(id: number, data: Partial<Client>): Promise<Client | null> {
+
+    const client = await Client.findByPk(id);
+
+    if (!client) return null;
+
+    await client.update(data);
+    return client;
+  }
+
+  async softDelete(id: number): Promise<boolean> {
+
+    const client = await Client.findByPk(id);
+    if (!client) return false;
+
+    await client.destroy();
+    return true;
+  }
+
 }

@@ -101,4 +101,46 @@ describe('ClientService', () => {
     expect(result).toEqual(mockData);
   });
 
+  it('should update a client', async () => {
+    const updatedClient = {
+      id: 1,
+      fullName: 'Carlos Actualizado',
+    };
+
+    mockRepo.update.mockResolvedValue(updatedClient as any);
+
+    const result = await service.updateClient(1, { fullName: 'Carlos Actualizado' });
+
+    expect(mockRepo.update).toHaveBeenCalledWith(1, { fullName: 'Carlos Actualizado' });
+    expect(result).toEqual(updatedClient);
+  });
+
+  it('should return null if client to update is not found', async () => {
+    mockRepo.update.mockResolvedValue(null);
+
+    const result = await service.updateClient(999, { fullName: 'No existe' });
+
+    expect(mockRepo.update).toHaveBeenCalledWith(999, { fullName: 'No existe' });
+    expect(result).toBeNull();
+  });
+
+  it('should soft delete a client', async () => {
+    mockRepo.softDelete.mockResolvedValue(true);
+
+    const result = await service.deleteClient(2);
+
+    expect(mockRepo.softDelete).toHaveBeenCalledWith(2);
+    expect(result).toBe(true);
+  });
+
+  it('should return false if client to delete is not found', async () => {
+    mockRepo.softDelete.mockResolvedValue(false);
+
+    const result = await service.deleteClient(999);
+
+    expect(mockRepo.softDelete).toHaveBeenCalledWith(999);
+    expect(result).toBe(false);
+  });
+
+
 });

@@ -32,4 +32,12 @@ export class ClientService {
 
   }
 
+  async updateClient(id: number, data: Partial<Client>) {
+    return await this.clientRepo.update(id, data);
+  }
+
+  async deleteClient(id: number) {
+    return await this.clientRepo.softDelete(id);
+  }
+
 }

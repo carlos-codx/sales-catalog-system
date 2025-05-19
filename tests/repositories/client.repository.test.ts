@@ -104,5 +104,56 @@ describe('ClientRepository', () => {
 
     expect(result).toEqual(mockResult);
   });
+
+  it('should update a client if found', async () => {
+    const mockClient = {
+      id: 1,
+      fullName: 'Carlos',
+      update: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (Client.findByPk as jest.Mock).mockResolvedValue(mockClient);
+
+    const updatedData = { fullName: 'Carlos Actualizado' };
+    const result = await repo.update(1, updatedData);
+
+    expect(Client.findByPk).toHaveBeenCalledWith(1);
+    expect(mockClient.update).toHaveBeenCalledWith(updatedData);
+    expect(result).toBe(mockClient);
+  });
+
+  it('should return null if client to update is not found', async () => {
+    (Client.findByPk as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.update(999, { fullName: 'No existe' });
+
+    expect(Client.findByPk).toHaveBeenCalledWith(999);
+    expect(result).toBeNull();
+  });
+
+  it('should soft delete a client if found', async () => {
+    const mockClient = {
+      id: 2,
+      destroy: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (Client.findByPk as jest.Mock).mockResolvedValue(mockClient);
+
+    const result = await repo.softDelete(2);
+
+    expect(Client.findByPk).toHaveBeenCalledWith(2);
+    expect(mockClient.destroy).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it('should return false if client to delete is not found', async () => {
+    (Client.findByPk as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.softDelete(999);
+
+    expect(Client.findByPk).toHaveBeenCalledWith(999);
+    expect(result).toBe(false);
+  });
+
   
 });

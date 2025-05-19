@@ -24,3 +24,14 @@ export const GetClientsSchema = z.object({
 });
 
 export type GetClientsInput = z.infer<typeof GetClientsSchema>;
+
+
+export const UpdateClientSchema = z.object({
+  code: z.string().optional().transform((val) => val ? xss(val) : undefined),
+  fullName: z.string().optional().transform((val) => val ? xss(val) : undefined),
+  nit: z.string().optional().transform((val) => val ? xss(val) : undefined),
+  phone: z.string().optional().transform((val) => val ? xss(val) : undefined),
+  email: z.string().email().optional().transform((val) => val ? xss(val) : undefined),
+});
+
+export type UpdateClientInput = z.infer<typeof UpdateClientSchema>;

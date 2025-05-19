@@ -85,3 +85,80 @@ export const getClients = async (req: Request, res: Response): Promise<void> => 
   }
 
 };
+
+export const updateClient = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const updated = await clientService.updateClient(id, req.body);
+
+    if (!updated) {
+      res.status(404).json({
+        message: `Client with id '${id}' not found`,
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+
+    const existsByCode = await clientService.getClientByCode(req.body.code);
+
+    if (existsByCode && existsByCode.id !== id) {
+      res.status(409).json({
+        message: `A client with the code '${req.body.code}' already exists`,
+        status: 409,
+        error: true,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: 'Client updated successfully',
+      status: 200,
+      error: false,
+      result: updated,
+    });
+
+  } catch (error) {
+
+    console.error('Validation error:', error);
+    res.status(404).json({
+      message: 'Client not found',
+      status: 404,
+      error: true,
+    });
+
+  }
+
+};
+
+export const deleteClient = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const deleted = await clientService.deleteClient(id);
+    
+    if (!deleted) {
+      res.status(404).json({
+        message: `Client with id '${id}' not found`,
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+
+    res.status(204).send();
+
+  } catch (error) {
+
+    console.error('Validation error:', error);
+    res.status(500).json({
+      message: 'An unexpected error occurred while deleting the client',
+      status: 500,
+      error: true,
+    });
+
+  }
+};
