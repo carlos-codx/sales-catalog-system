@@ -3,8 +3,10 @@ import { createProduct, deleteProduct, getProductById, getProducts, updateProduc
 import { validateRequestBody } from '../middlewares/validate-request-body';
 import { CreateProductSchema, GetProductSchema, UpdateProductSchema } from '../utils/validators/product.validator';
 import { validateRequestQuery } from '../middlewares/validate-request-query';
+import { authenticateToken } from '../middlewares/auth.middleware';
 
 const router = Router();
+router.use(authenticateToken);
 
 router.post('/', validateRequestBody(CreateProductSchema), createProduct);
 router.get('/', validateRequestQuery(GetProductSchema), getProducts);

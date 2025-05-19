@@ -6,6 +6,7 @@ import productRoutes from './routes/product.routes';
 import clientRoutes from './routes/client.routes';
 import discountRoutes from './routes/discount.routes';
 import salesRoutes from './routes/sale.routes';
+import authRoutes from './routes/auth.routes';
 
 
 dotenv.config();
@@ -15,6 +16,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/discounts', discountRoutes);
 app.use('/api/sales', salesRoutes);
+app.use('/api/auth', authRoutes);
 
 const startServer = async () => {
   try {
