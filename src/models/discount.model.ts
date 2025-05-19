@@ -15,7 +15,7 @@ interface DiscountAttributes {
   deletedAt?: Date | null;
 }
 
-interface DiscountCreationAttributes extends Optional<DiscountAttributes, 'id' | 'deletedAt'> {}
+export interface DiscountCreationAttributes extends Optional<DiscountAttributes, 'id' | 'deletedAt'> {}
 
 export class Discount extends Model<DiscountAttributes, DiscountCreationAttributes> implements DiscountAttributes {
   public id!: number;

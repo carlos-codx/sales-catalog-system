@@ -4,6 +4,7 @@ import { sequelize } from './utils/database';
 import { runMigrationsAndSeeders } from './utils/migrator';
 import productRoutes from './routes/product.routes';
 import clientRoutes from './routes/client.routes';
+import discountRoutes from './routes/discount.routes';
 
 
 dotenv.config();
@@ -11,6 +12,7 @@ const app = express();
 app.use(express.json());
 app.use('/api/products', productRoutes);
 app.use('/api/clients', clientRoutes);
+app.use('/api/discounts', discountRoutes);
 
 const startServer = async () => {
   try {
