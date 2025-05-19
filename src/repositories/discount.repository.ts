@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Discount, DiscountCreationAttributes } from '../models/discount.model';
 import { Product } from '../models/product.model';
 
@@ -37,6 +38,21 @@ export class DiscountRepository {
       limit,
       offset,
     });
+  }
+
+  async findActiveDiscount(productId: number): Promise<Discount | null> {
+
+    const now = new Date();
+
+    return await Discount.findOne({
+      where: {
+        productId,
+        status: 'ACTIVE',
+        startDate: { [Op.lte]: now },
+        endDate: { [Op.gte]: now },
+      },
+    });
+
   }
 
 }

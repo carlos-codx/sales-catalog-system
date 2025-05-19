@@ -1,6 +1,7 @@
 import { DiscountRepository } from '../../src/repositories/discount.repository';
 import { Discount } from '../../src/models/discount.model';
 import { Product } from '../../src/models/product.model';
+import { Op } from 'sequelize';
 
 jest.mock('../../src/models/discount.model');
 
@@ -132,6 +133,51 @@ describe('DiscountRepository', () => {
     });
 
     expect(result).toEqual(mockResult);
+  });
+
+it('should find active discount for a product within date range', async () => {
+    const mockDiscount = {
+      id: 1,
+      productId: 10,
+      status: 'ACTIVE',
+      startDate: new Date('2024-01-01'),
+      endDate: new Date('2024-12-31'),
+    };
+
+    (Discount.findOne as jest.Mock).mockResolvedValue(mockDiscount);
+
+    const productId = 10;
+    const now = new Date();
+
+    const result = await repo.findActiveDiscount(productId);
+
+    expect(Discount.findOne).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        productId,
+        status: 'ACTIVE',
+        startDate: expect.objectContaining({ [Op.lte]: expect.any(Date) }),
+        endDate: expect.objectContaining({ [Op.gte]: expect.any(Date) }),
+      }),
+    });
+
+    expect(result).toEqual(mockDiscount);
+  });
+
+  it('should return null if no active discount is found', async () => {
+    (Discount.findOne as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.findActiveDiscount(999);
+
+    expect(Discount.findOne).toHaveBeenCalledWith({
+      where: expect.objectContaining({
+        productId: 999,
+        status: 'ACTIVE',
+        startDate: expect.any(Object),
+        endDate: expect.any(Object),
+      }),
+    });
+
+    expect(result).toBeNull();
   });
 
 });

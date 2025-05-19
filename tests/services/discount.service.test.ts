@@ -114,5 +114,73 @@ describe('DiscountService', () => {
     expect(result).toBeNull();
   });
 
+  it('should return original price and 0 discount if no active discount exists', async () => {
+    const product = { id: 1, price: 100 } as any;
+
+    mockRepo.findActiveDiscount.mockResolvedValue(null);
+
+    const result = await service.getDiscountedPrice(product);
+
+    expect(mockRepo.findActiveDiscount).toHaveBeenCalledWith(1);
+    expect(result).toEqual({ discountAmount: 0, finalPrice: 100 });
+  });
+
+  it('should apply discount and return discounted price', async () => {
+    const product = { id: 2, price: 200 } as any;
+
+    const activeDiscount = {
+      id: 10,
+      productId: 2,
+      value: 25, // 25%
+      status: 'ACTIVE',
+      startDate: new Date('2024-01-01'),
+      endDate: new Date('2024-12-31'),
+    };
+
+    mockRepo.findActiveDiscount.mockResolvedValue(activeDiscount as any);
+
+    const result = await service.getDiscountedPrice(product);
+
+    const expectedDiscount = (200 * 25) / 100;
+    const expectedFinalPrice = 200 - expectedDiscount;
+
+    expect(mockRepo.findActiveDiscount).toHaveBeenCalledWith(2);
+    expect(result).toEqual({
+      discountAmount: expectedDiscount,
+      finalPrice: expectedFinalPrice,
+    });
+  });
+
+  it('should get all discounts with productId, limit and offset', async () => {
+    const mockData: any = {
+      count: 2,
+      rows: [
+        { id: 1, productId: 1, value: 10 },
+        { id: 2, productId: 1, value: 20 },
+      ],
+    };
+
+    mockRepo.findAll.mockResolvedValue(mockData);
+
+    const result = await service.getAllDiscounts(1, 10, 0);
+
+    expect(mockRepo.findAll).toHaveBeenCalledWith(1, 10, 0);
+    expect(result).toEqual(mockData);
+  });
+
+  it('should get all discounts without filters', async () => {
+    const mockData: any = {
+      count: 1,
+      rows: [{ id: 3, productId: 2, value: 5 }],
+    };
+
+    mockRepo.findAll.mockResolvedValue(mockData);
+
+    const result = await service.getAllDiscounts();
+
+    expect(mockRepo.findAll).toHaveBeenCalledWith(undefined, undefined, undefined);
+    expect(result).toEqual(mockData);
+  });
+
 
 });
