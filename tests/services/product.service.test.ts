@@ -113,5 +113,17 @@ describe('ProductService', () => {
     expect(result).toBeNull();
   });
 
+  it('should find many products by ids', async () => {
+    const mockProducts = [{ id: 1 }, { id: 2 }];
+    const ids = [1, 2];
+
+    mockRepo.findManyByIds.mockResolvedValue(mockProducts as any);
+
+    const result = await service.findManyByIds(ids);
+
+    expect(mockRepo.findManyByIds).toHaveBeenCalledWith(ids);
+    expect(result).toEqual(mockProducts);
+  });
+
 
 });

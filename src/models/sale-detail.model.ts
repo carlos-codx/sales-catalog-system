@@ -17,7 +17,7 @@ interface SaleDetailAttributes {
   deletedAt?: Date | null;
 }
 
-interface SaleDetailCreationAttributes extends Optional<SaleDetailAttributes, 'id' | 'deletedAt'> {}
+export interface SaleDetailCreationAttributes extends Optional<SaleDetailAttributes, 'saleId' | 'id' | 'deletedAt'> {}
 
 export class SaleDetail extends Model<SaleDetailAttributes, SaleDetailCreationAttributes> implements SaleDetailAttributes {
   public id!: number;

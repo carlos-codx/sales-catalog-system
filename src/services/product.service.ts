@@ -42,4 +42,8 @@ export class ProductService {
     return await this.productRepo.findById(id);
   }
 
+  async findManyByIds(ids: number[]) {
+    return await this.productRepo.findManyByIds(ids);
+  }
+
 }
