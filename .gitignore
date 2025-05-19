@@ -1,0 +1,52 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional npm cache directory
+.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# dotenv environment variables file
+.env
+.env.*
+.env.*.local
+
+# Build output
+dist/
+build/
+tmp/
+temp/
+out/
+
+# Logs
+logs
+*.log
+logs/*.log
+
+# Coverage directory used by testing tools
+coverage/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Optional: ignore local database or uploads
+/data/
+uploads/
