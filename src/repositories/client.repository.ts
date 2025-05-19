@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Client, ClientCreationAttributes } from '../models/client.model';
 
 export class ClientRepository {
@@ -12,4 +13,21 @@ export class ClientRepository {
       },
     });
   }
+
+  async findAll(nit?: string, limit?: number, offset?: number): Promise<{ count: number; rows: Client[] }> {
+
+    const where: any = {};
+
+    if (nit) {
+      where.nit = { [Op.like]: `%${nit}%` };
+    }
+
+    return await Client.findAndCountAll({
+      where,
+      limit,
+      offset,
+    });
+
+  }
+
 }

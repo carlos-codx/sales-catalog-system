@@ -26,4 +26,10 @@ export class ClientService {
 
   }
 
+  async getAllClients(nit?: string, limit?: number, offset?: number) {
+
+    return await this.clientRepo.findAll(nit, limit, offset);
+
+  }
+
 }

@@ -1,5 +1,6 @@
 import { ClientRepository } from '../../src/repositories/client.repository';
 import { Client } from '../../src/models/client.model';
+import { Op } from 'sequelize';
 
 jest.mock('../../src/models/client.model');
 
@@ -61,6 +62,47 @@ describe('ClientRepository', () => {
     });
 
     expect(result).toBeNull();
+  });
+
+ it('should find all clients with nit filter and pagination', async () => {
+    const mockResult = {
+      count: 2,
+      rows: [
+        { id: 1, nit: '12345678' },
+        { id: 2, nit: '12349876' },
+      ],
+    };
+
+    (Client.findAndCountAll as jest.Mock).mockResolvedValue(mockResult);
+
+    const result = await repo.findAll('1234', 10, 0);
+
+    expect(Client.findAndCountAll).toHaveBeenCalledWith({
+      where: { nit: { [Op.like]: '%1234%' } },
+      limit: 10,
+      offset: 0,
+    });
+
+    expect(result).toEqual(mockResult);
+  });
+
+  it('should find all clients without filters', async () => {
+    const mockResult = {
+      count: 1,
+      rows: [{ id: 1, nit: '99999999' }],
+    };
+
+    (Client.findAndCountAll as jest.Mock).mockResolvedValue(mockResult);
+
+    const result = await repo.findAll();
+
+    expect(Client.findAndCountAll).toHaveBeenCalledWith({
+      where: {},
+      limit: undefined,
+      offset: undefined,
+    });
+
+    expect(result).toEqual(mockResult);
   });
   
 });

@@ -70,5 +70,35 @@ describe('ClientService', () => {
     expect(result).toEqual(mockClient);
   });
 
+  it('should get all clients with nit filter and pagination', async () => {
+    const mockData: any = {
+      count: 2,
+      rows: [
+        { id: 1, fullName: 'Carlos', nit: '1234', createdAt: new Date(), updatedAt: new Date() },
+        { id: 2, fullName: 'Ana', nit: '1234', createdAt: new Date(), updatedAt: new Date() },
+      ],
+    };
+
+    mockRepo.findAll.mockResolvedValue(mockData);
+
+    const result = await service.getAllClients('1234', 10, 0);
+
+    expect(mockRepo.findAll).toHaveBeenCalledWith('1234', 10, 0);
+    expect(result).toEqual(mockData);
+  });
+
+  it('should get all clients without filters', async () => {
+    const mockData: any = {
+      count: 1,
+      rows: [{ id: 1, fullName: 'Lucía', nit: '999999', createdAt: new Date(), updatedAt: new Date() }],
+    };
+
+    mockRepo.findAll.mockResolvedValue(mockData);
+
+    const result = await service.getAllClients();
+
+    expect(mockRepo.findAll).toHaveBeenCalledWith(undefined, undefined, undefined);
+    expect(result).toEqual(mockData);
+  });
 
 });

@@ -10,3 +10,17 @@ export const CreateClientSchema = z.object({
 });
 
 export type CreateClientInput = z.infer<typeof CreateClientSchema>;
+
+export const GetClientsSchema = z.object({
+  nit: z.string().optional().transform((val) => (val ? xss(val) : undefined)),
+  limit: z.string().refine((val) => {
+    const num = parseInt(val);
+    return !isNaN(num) && num > 0;
+  }).transform((val) => parseInt(val)).optional(),
+  offset: z.string().refine((val) => {
+    const num = parseInt(val);
+    return !isNaN(num) && num >= 0;
+  }).transform((val) => parseInt(val)).optional(),
+});
+
+export type GetClientsInput = z.infer<typeof GetClientsSchema>;

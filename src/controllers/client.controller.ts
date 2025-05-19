@@ -49,3 +49,39 @@ export const createClient = async (req: Request, res: Response): Promise<void> =
   }
 
 };
+
+export const getClients = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const { nit, limit, offset } = req.query;
+
+    const result = await clientService.getAllClients(
+      typeof nit === 'string' ? nit : undefined,
+      limit ? parseInt(limit as string) : undefined,
+      offset ? parseInt(offset as string) : undefined
+    );
+
+    res.status(200).json({
+      message: 'Clients retrieved successfully',
+      status: 200,
+      error: false,
+      result: {
+        count: result.count,
+        rows: result.rows,
+      },
+    });
+
+  } catch (error) {
+
+    console.error('Validation error:', error);
+    
+    res.status(500).json({
+      message: 'An unexpected error occurred while retrieving the clients',
+      status: 500,
+      error: true,
+    });
+
+  }
+
+};
