@@ -40,4 +40,8 @@ export class ClientService {
     return await this.clientRepo.softDelete(id);
   }
 
+  async getClientById(id: number) {
+    return await this.clientRepo.findById(id);
+  }
+
 }

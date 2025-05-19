@@ -155,5 +155,29 @@ describe('ClientRepository', () => {
     expect(result).toBe(false);
   });
 
+  it('should find a client by id', async () => {
+    const mockClient = {
+      id: 1,
+      fullName: 'Carlos Pérez',
+      nit: '12345678',
+    };
+
+    (Client.findOne as jest.Mock).mockResolvedValue(mockClient);
+
+    const result = await repo.findById(1);
+
+    expect(Client.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+    expect(result).toEqual(mockClient);
+  });
+
+  it('should return null if client not found by id', async () => {
+    (Client.findOne as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.findById(999);
+
+    expect(Client.findOne).toHaveBeenCalledWith({ where: { id: 999 } });
+    expect(result).toBeNull();
+  });
+
   
 });

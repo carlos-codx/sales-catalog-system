@@ -38,7 +38,6 @@ Client.init(
     code: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     fullName: {
       type: DataTypes.STRING,
@@ -47,7 +46,6 @@ Client.init(
     nit: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     phone: {
       type: DataTypes.STRING,

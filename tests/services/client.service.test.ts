@@ -142,5 +142,31 @@ describe('ClientService', () => {
     expect(result).toBe(false);
   });
 
+  it('should get a client by id', async () => {
+    const mockClient = {
+      id: 1,
+      fullName: 'Carlos Pérez',
+      nit: '12345678',
+      phone: '7654321',
+      email: 'carlos@example.com',
+    };
+
+    mockRepo.findById.mockResolvedValue(mockClient as any);
+
+    const result = await service.getClientById(1);
+
+    expect(mockRepo.findById).toHaveBeenCalledWith(1);
+    expect(result).toEqual(mockClient);
+  });
+
+  it('should return null if client not found by id', async () => {
+    mockRepo.findById.mockResolvedValue(null);
+
+    const result = await service.getClientById(999);
+
+    expect(mockRepo.findById).toHaveBeenCalledWith(999);
+    expect(result).toBeNull();
+  });
+
 
 });

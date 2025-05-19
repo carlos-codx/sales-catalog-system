@@ -49,4 +49,15 @@ export class ClientRepository {
     return true;
   }
 
+  async findById(id: number): Promise<Client | null> {
+
+    const client = await Client.findOne({ where: { id } });
+
+    if (!client) {
+      return null;
+    }
+
+    return client;
+  }
+
 }

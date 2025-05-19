@@ -161,4 +161,40 @@ export const deleteClient = async (req: Request, res: Response): Promise<void> =
     });
 
   }
+
+};
+
+export const getClientById = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const client = await clientService.getClientById(id);
+    
+    if (!client) {
+      res.status(404).json({
+        message: `Client with id '${id}' not found`,
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+    res.status(200).json({
+      message: 'Client retrieved successfully',
+      status: 200,
+      error: false,
+      result: client,
+    });
+
+  } catch (error) {
+
+    console.error('Validation error:', error);
+    res.status(500).json({
+      message: 'An unexpected error occurred while retrieving the client',
+      status: 500,
+      error: true,
+    });
+
+  }
+
 };
