@@ -30,4 +30,8 @@ export class DiscountService {
     return await this.discountRepo.updateStatus(id, 'INACTIVE');
   }
 
+  async getAllDiscounts(productId?: number, limit?: number, offset?: number) {
+    return await this.discountRepo.findAll(productId, limit, offset);
+  }
+
 }

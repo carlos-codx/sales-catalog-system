@@ -1,5 +1,6 @@
 import { DiscountRepository } from '../../src/repositories/discount.repository';
 import { Discount } from '../../src/models/discount.model';
+import { Product } from '../../src/models/product.model';
 
 jest.mock('../../src/models/discount.model');
 
@@ -90,5 +91,47 @@ describe('DiscountRepository', () => {
     expect(result).toBeNull();
   });
 
+  it('should find all discounts with productId filter and pagination', async () => {
+    const mockResult = {
+      count: 2,
+      rows: [
+        { id: 1, productId: 1, value: 10, product: { id: 1, name: 'Test Product' } },
+        { id: 2, productId: 1, value: 15, product: { id: 1, name: 'Test Product' } },
+      ],
+    };
+
+    (Discount.findAndCountAll as jest.Mock).mockResolvedValue(mockResult);
+
+    const result = await repo.findAll(1, 10, 0);
+
+    expect(Discount.findAndCountAll).toHaveBeenCalledWith({
+      where: { productId: 1 },
+      include: [{ model: Product, as: 'product' }],
+      limit: 10,
+      offset: 0,
+    });
+
+    expect(result).toEqual(mockResult);
+  });
+
+  it('should find all discounts without filters', async () => {
+    const mockResult = {
+      count: 1,
+      rows: [{ id: 3, productId: 2, value: 5 }],
+    };
+
+    (Discount.findAndCountAll as jest.Mock).mockResolvedValue(mockResult);
+
+    const result = await repo.findAll();
+
+    expect(Discount.findAndCountAll).toHaveBeenCalledWith({
+      where: {},
+      include: [{ model: Product, as: 'product' }],
+      limit: undefined,
+      offset: undefined,
+    });
+
+    expect(result).toEqual(mockResult);
+  });
 
 });

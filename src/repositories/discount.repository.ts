@@ -1,4 +1,5 @@
 import { Discount, DiscountCreationAttributes } from '../models/discount.model';
+import { Product } from '../models/product.model';
 
 export class DiscountRepository {
   async create(data: DiscountCreationAttributes) {
@@ -20,6 +21,22 @@ export class DiscountRepository {
     discount.status = status;
     await discount.save();
     return discount;
+  }
+
+  async findAll(productId?: number, limit?: number, offset?: number): Promise<{ count: number; rows: Discount[] }> {
+
+    const where: any = {};
+
+    if (productId) {
+      where.productId = productId;
+    }
+
+    return await Discount.findAndCountAll({
+      where,
+      include: [{ model: Product, as: 'product' }],
+      limit,
+      offset,
+    });
   }
 
 }

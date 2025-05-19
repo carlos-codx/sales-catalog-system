@@ -120,3 +120,35 @@ export const deactivateDiscount = async (req: Request, res: Response): Promise<v
 
   }
 };
+
+export const getDiscounts = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const { productId, limit, offset } = req.query;
+
+    const result = await discountService.getAllDiscounts(
+      productId ? parseInt(productId as string) : undefined,
+      limit ? parseInt(limit as string) : undefined,
+      offset ? parseInt(offset as string) : undefined
+    );
+
+    res.status(200).json({
+      message: 'Descuentos obtenidos correctamente',
+      status: 200,
+      error: false,
+      result: {
+        count: result.count,
+        rows: result.rows,
+      },
+    });
+
+  } catch (error) {
+    console.error('Validation error:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al obtener los descuentos',
+      status: 500,
+      error: true,
+    });
+  }
+};
