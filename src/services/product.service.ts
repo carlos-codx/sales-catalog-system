@@ -26,4 +26,8 @@ export class ProductService {
     return product;
   }
 
+  async getAllProducts(filters: { code?: string; name?: string }, limit?: number, offset?: number) {
+    return await this.productRepo.findAll(filters, limit, offset);
+  }
+
 }

@@ -23,6 +23,7 @@ export class Product extends Model<ProductAttributes, ProductCreationAttributes>
   public description?: string;
   public price!: number;
   public unitId!: number;
+  public unit!: Unit;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;

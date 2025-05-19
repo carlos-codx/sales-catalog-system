@@ -1,5 +1,6 @@
 import { ProductRepository } from '../../src/repositories/product.repository';
 import { Product } from '../../src/models/product.model';
+import { Op } from 'sequelize';
 
 jest.mock('../../src/models/product.model');
 
@@ -37,4 +38,36 @@ describe('ProductRepository', () => {
     expect(Product.findOne).toHaveBeenCalledWith({ where: { code: 'XYZ' } });
     expect(result).toEqual(mockResult);
   });
+
+  it('should find products with filters, pagination and unit included', async () => {
+    const mockResult = {
+      count: 2,
+      rows: [
+        { id: 1, code: 'P001', name: 'Apple', unit: { id: 1, name: 'kg' } },
+        { id: 2, code: 'P002', name: 'Banana', unit: { id: 2, name: 'kg' } },
+      ],
+    };
+
+    (Product.findAndCountAll as jest.Mock).mockResolvedValue(mockResult);
+
+    const filters = { code: 'P0', name: 'A' };
+    const limit = 10;
+    const offset = 0;
+
+    const result = await repo.findAll(filters, limit, offset);
+
+    expect(Product.findAndCountAll).toHaveBeenCalledWith({
+      where: {
+        code: { [Op.like]: '%P0%' },
+        name: { [Op.like]: '%A%' },
+      },
+      include: [{ model: expect.any(Function), as: 'unit' }],
+      limit,
+      offset,
+    });
+
+    expect(result).toEqual(mockResult);
+  });
+
+
 });

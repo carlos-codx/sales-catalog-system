@@ -40,4 +40,21 @@ describe('ProductService', () => {
     expect(result).toEqual(mockProduct);
     expect(mockRepo.findOneByCode).toHaveBeenCalledWith('P002');
   });
+
+  describe('ProductService - getAllProducts', () => {
+    it('should return filtered products with pagination', async () => {
+      const mockData: any = {
+        rows: [{ id: 1, code: 'X1', name: 'Example', description: 'test data', price: 10, unitId: 1, unit: { name: 'kg' }, createdAt: new Date(), updatedAt: new Date() }],
+        count: 1,
+      };
+
+      mockRepo.findAll.mockResolvedValue(mockData);
+
+      const result = await service.getAllProducts({ code: 'X1' }, 10, 0);
+
+      expect(mockRepo.findAll).toHaveBeenCalledWith({ code: 'X1' }, 10, 0);
+      expect(result).toEqual(mockData);
+    });
+  });
+
 });

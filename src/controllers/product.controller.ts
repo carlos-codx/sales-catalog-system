@@ -52,3 +52,46 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
   }
 
 };
+
+export const getProducts = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { code, name, limit, offset } = req.query;
+
+    const result = await productService.getAllProducts(
+      {
+        code: typeof code === 'string' ? code : undefined,
+        name: typeof name === 'string' ? name : undefined,
+      },
+      limit ? parseInt(limit as string) : undefined,
+      offset ? parseInt(offset as string) : undefined
+    );
+
+    res.status(200).json({
+      message: 'Productos obtenidos correctamente',
+      status: 200,
+      error: false,
+      result: {
+        count: result.count,
+        rows: result.rows.map((product) => ({
+          id: product.id,
+          code: product.code,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          unitId: product.unitId,
+          unitName: product.unit?.name,
+        })),
+      },
+    })
+
+  } catch (error) {
+    console.error('Error al obtener los productos:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al obtener los productos',
+      status: 500,
+      error: true,
+    });
+
+  }
+
+};
