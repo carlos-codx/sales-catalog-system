@@ -3,8 +3,10 @@ import { createClient, deleteClient, getClients, updateClient } from '../control
 import { validateRequestBody } from '../middlewares/validate-request-body';
 import { CreateClientSchema, GetClientsSchema, UpdateClientSchema } from '../utils/validators/client.validators';
 import { validateRequestQuery } from '../middlewares/validate-request-query';
+import { authenticateToken } from '../middlewares/auth.middleware';
 
 const router = Router();
+router.use(authenticateToken);
 
 router.post('/', validateRequestBody(CreateClientSchema), createClient);
 router.get('/', validateRequestQuery(GetClientsSchema), getClients);

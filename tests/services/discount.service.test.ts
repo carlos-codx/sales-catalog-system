@@ -182,5 +182,28 @@ describe('DiscountService', () => {
     expect(result).toEqual(mockData);
   });
 
+  it('should create a discount when dates are already Date objects', async () => {
+    const input: any = {
+      productId: 5,
+      value: 20,
+      startDate: new Date('2024-05-01'),
+      endDate: new Date('2024-12-31'),
+      status: 'ACTIVE',
+      type: 'PERCENTAGE',
+    };
+
+    const expectedDiscount = {
+      id: 2,
+      ...input,
+    };
+
+    mockRepo.create.mockResolvedValue(expectedDiscount as any);
+
+    const result = await service.createDiscount(input);
+
+    expect(mockRepo.create).toHaveBeenCalledWith(input);
+    expect(result).toEqual(expectedDiscount);
+  });
+
 
 });
