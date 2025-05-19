@@ -1,5 +1,8 @@
 jest.mock('../../src/models/sale.model', () => ({
-  Sale: { create: jest.fn() },
+  Sale: {
+    create: jest.fn(),
+    findByPk: jest.fn(),
+  },
 }));
 
 jest.mock('../../src/models/sale-detail.model', () => ({
@@ -84,4 +87,27 @@ describe('SaleRepository - createSaleWithDetails', () => {
     expect(mockTransaction.rollback).toHaveBeenCalled();
     expect(result).toBeNull();
   });
+
+  it('should delete a sale if it exists', async () => {
+    const mockSale = {
+      id: 1,
+      destroy: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (Sale.findByPk as jest.Mock).mockResolvedValue(mockSale);
+
+    await repo.deleteById(1);
+
+    expect(Sale.findByPk).toHaveBeenCalledWith(1);
+    expect(mockSale.destroy).toHaveBeenCalled();
+  });
+
+  it('should do nothing if sale does not exist', async () => {
+    (Sale.findByPk as jest.Mock).mockResolvedValue(null);
+
+    await repo.deleteById(999);
+
+    expect(Sale.findByPk).toHaveBeenCalledWith(999);
+  });
+
 });

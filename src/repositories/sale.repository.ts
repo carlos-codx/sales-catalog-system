@@ -31,4 +31,12 @@ export class SaleRepository {
     }
 
   }
+
+  async deleteById(id: number): Promise<void> {
+    const sale = await Sale.findByPk(id);
+    if (!sale) return;
+
+    await sale.destroy();
+  }
+
 }

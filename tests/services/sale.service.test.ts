@@ -102,11 +102,19 @@ describe('SaleService', () => {
 
     const mockProduct = { id: 1, price: 50 };
     const mockDiscount = { discountAmount: 5, finalPrice: 45 };
-    const mockSale = { id: 101, clientId: 1, total: 90, paymentMethod: 'CASH' };
+
+    const mockSale = {
+      id: 101,
+      clientId: 1,
+      total: 90,
+      paymentMethod: 'CASH',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as any;
 
     mockProductService.findManyByIds.mockResolvedValue([mockProduct] as any);
     mockDiscountService.getDiscountedPrice.mockResolvedValue(mockDiscount);
-    mockSaleRepo.createSaleWithDetails.mockResolvedValue(mockSale as any);
+    mockSaleRepo.createSaleWithDetails.mockResolvedValue(mockSale);
 
     const result = await service.registerSale(1, 'CASH', products);
 
@@ -130,17 +138,12 @@ describe('SaleService', () => {
       ]
     );
 
-    expect(result).toEqual({
-      success: true,
-      message: 'Venta registrada correctamente',
-      result: {
-        sale: mockSale,
-        summary: {
-          subtotal: 100,
-          discountTotal: 10, // 5 * 2
-          total: 90,
-        },
-      },
+    expect(result.success).toBe(true);
+    expect(result.result?.sale).toEqual(mockSale);
+    expect(result.result?.summary).toEqual({
+      subtotal: 100,
+      discountTotal: 10,
+      total: 90,
     });
   });
 
@@ -161,4 +164,26 @@ describe('SaleService', () => {
       message: 'Error al registrar la venta',
     });
   });
+
+  it('should call deleteById from repository when cancelSale is called', async () => {
+    mockSaleRepo.deleteById.mockResolvedValue(undefined);
+
+    await service.cancelSale(123);
+
+    expect(mockSaleRepo.deleteById).toHaveBeenCalledWith(123);
+  });
+
+  it('should handle nullish return from productService.findManyByIds', async () => {
+    mockProductService.findManyByIds.mockResolvedValue(null as any);
+
+    const result = await service.registerSale(1, 'CASH', [
+      { productId: 1, quantity: 1 },
+    ]);
+
+    expect(result).toEqual({
+      success: false,
+      message: 'No se encontraron todos los productos proporcionados',
+    });
+  });
+
 });

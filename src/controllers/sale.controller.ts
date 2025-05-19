@@ -73,4 +73,26 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
     }
 
   }
+
+};
+
+export const cancelSale = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    await saleService.cancelSale(id);
+
+    res.status(204).send();
+
+  } catch (error) {
+
+    console.error('Error canceling sale:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al cancelar la venta',
+      status: 500,
+      error: true,
+    });
+
+  }
 };

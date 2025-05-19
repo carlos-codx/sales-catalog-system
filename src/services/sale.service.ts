@@ -117,4 +117,8 @@ export class SaleService {
 
   }
 
+  async cancelSale(id: number): Promise<void> {
+    await this.saleRepo.deleteById(id);
+  }
+
 }
