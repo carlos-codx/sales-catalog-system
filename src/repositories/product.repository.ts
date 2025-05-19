@@ -33,4 +33,20 @@ export class ProductRepository {
     });
   }
 
+  async update(id: number, data: Partial<Product>): Promise<Product | null> {
+    const product = await Product.findByPk(id);
+    if (!product) return null;
+
+    await product.update(data);
+    return product;
+  }
+
+  async softDelete(id: number): Promise<boolean> {
+    const product = await Product.findByPk(id);
+    if (!product) return false;
+
+    await product.destroy();
+    return true;
+  }
+
 }

@@ -57,4 +57,42 @@ describe('ProductService', () => {
     });
   });
 
+  it('should update a product', async () => {
+    const updatedProduct = { id: 1, name: 'Updated Product' };
+    mockRepo.update.mockResolvedValue(updatedProduct as any);
+
+    const result = await service.updateProduct(1, { name: 'Updated Product' });
+
+    expect(mockRepo.update).toHaveBeenCalledWith(1, { name: 'Updated Product' });
+    expect(result).toEqual(updatedProduct);
+  });
+
+  it('should delete a product (soft delete)', async () => {
+    mockRepo.softDelete.mockResolvedValue(true);
+
+    const result = await service.deleteProduct(2);
+
+    expect(mockRepo.softDelete).toHaveBeenCalledWith(2);
+    expect(result).toBe(true);
+  });
+
+  it('should return null if product not found during update', async () => {
+    mockRepo.update.mockResolvedValue(null);
+
+    const result = await service.updateProduct(999, { name: 'Not Found' });
+
+    expect(mockRepo.update).toHaveBeenCalledWith(999, { name: 'Not Found' });
+    expect(result).toBeNull();
+  });
+
+  it('should return false if product not found during delete', async () => {
+    mockRepo.softDelete.mockResolvedValue(false);
+
+    const result = await service.deleteProduct(999);
+
+    expect(mockRepo.softDelete).toHaveBeenCalledWith(999);
+    expect(result).toBe(false);
+  });
+
+
 });

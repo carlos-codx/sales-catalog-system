@@ -1,5 +1,5 @@
 import { Product } from '../models/product.model';
-import { CreateProductInput } from '../utils/validators/product.validator';
+import { CreateProductInput, UpdateProductInput } from '../utils/validators/product.validator';
 import { ProductRepository } from '../repositories/product.repository';
 
 
@@ -28,6 +28,14 @@ export class ProductService {
 
   async getAllProducts(filters: { code?: string; name?: string }, limit?: number, offset?: number) {
     return await this.productRepo.findAll(filters, limit, offset);
+  }
+
+  async updateProduct(id: number, data: UpdateProductInput): Promise<Product | null> {
+    return await this.productRepo.update(id, data);
+  }
+
+  async deleteProduct(id: number) {
+    return await this.productRepo.softDelete(id);
   }
 
 }

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { createProductSchema } from '../utils/validators/product.validator';
+import { CreateProductSchema } from '../utils/validators/product.validator';
 import { ProductService } from '../services/product.service';
 
 const productService = new ProductService();
@@ -8,7 +8,8 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 
   try {
 
-    const alreadyExistsByName = await productService.getProductByName(req.body.name);
+    const parsed = CreateProductSchema.parse(req.body);
+    const alreadyExistsByName = await productService.getProductByName(parsed.name);
 
     if (alreadyExistsByName) {
       res.status(409).json({
@@ -19,18 +20,18 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const alreadyExistsByCode = await productService.getProductByName(req.body.code);
+    const alreadyExistsByCode = await productService.getProductByName(parsed.code);
 
     if (alreadyExistsByCode) {
       res.status(409).json({
-        message: `Ya existe un producto con el código '${req.body.code}'`,
+        message: `Ya existe un producto con el código '${parsed.code}'`,
         status: 409,
         error: true,
       });
       return;
     }
 
-    const parsed = createProductSchema.parse(req.body);
+
     const product = await productService.createProduct(parsed);
 
     res.status(201).json({
@@ -54,9 +55,10 @@ export const createProduct = async (req: Request, res: Response): Promise<void> 
 };
 
 export const getProducts = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { code, name, limit, offset } = req.query;
 
+  try {
+
+    const { code, name, limit, offset } = req.query;
     const result = await productService.getAllProducts(
       {
         code: typeof code === 'string' ? code : undefined,
@@ -94,4 +96,56 @@ export const getProducts = async (req: Request, res: Response): Promise<void> =>
 
   }
 
+};
+
+
+export const updateProduct = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const updated = await productService.updateProduct(id, req.body);
+    res.status(200).json({
+      message: 'Producto actualizado correctamente',
+      status: 200,
+      error: false,
+      result: updated,
+    });
+
+  } catch (error) {
+    console.error('Error al actualizar el producto:', error);
+    res.status(404).json({
+      message: 'No se ha encontrado el producto',
+      status: 404,
+      error: true,
+    });
+  }
+};
+
+export const deleteProduct = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const deleted = await productService.deleteProduct(id);
+
+    if (!deleted) {
+      res.status(404).json({
+        message: 'No se ha encontrado el producto',
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+
+    res.status(204).send();
+
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al eliminar el producto',
+      status: 500,
+      error: true,
+    });
+  }
 };

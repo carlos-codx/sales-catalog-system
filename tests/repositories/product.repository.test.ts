@@ -69,5 +69,55 @@ describe('ProductRepository', () => {
     expect(result).toEqual(mockResult);
   });
 
+  it('should update a product if found', async () => {
+    const mockProduct = {
+      id: 1,
+      name: 'Old',
+      update: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (Product.findByPk as jest.Mock).mockResolvedValue(mockProduct);
+
+    const updatedData = { name: 'New Name' };
+    const result = await repo.update(1, updatedData);
+
+    expect(Product.findByPk).toHaveBeenCalledWith(1);
+    expect(mockProduct.update).toHaveBeenCalledWith(updatedData);
+    expect(result).toBe(mockProduct);
+  });
+
+  it('should return null if product to update is not found', async () => {
+    (Product.findByPk as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.update(99, { name: 'Does not exist' });
+
+    expect(Product.findByPk).toHaveBeenCalledWith(99);
+    expect(result).toBeNull();
+  });
+
+  it('should soft delete a product if found', async () => {
+    const mockProduct = {
+      id: 2,
+      destroy: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (Product.findByPk as jest.Mock).mockResolvedValue(mockProduct);
+
+    const result = await repo.softDelete(2);
+
+    expect(Product.findByPk).toHaveBeenCalledWith(2);
+    expect(mockProduct.destroy).toHaveBeenCalled();
+    expect(result).toBe(true);
+  });
+
+  it('should return false if product to delete is not found', async () => {
+    (Product.findByPk as jest.Mock).mockResolvedValue(null);
+
+    const result = await repo.softDelete(999);
+
+    expect(Product.findByPk).toHaveBeenCalledWith(999);
+    expect(result).toBe(false);
+  });
+
 
 });
