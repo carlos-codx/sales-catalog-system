@@ -36,15 +36,10 @@ export const runMigrationsAndSeeders = async (sequelize: Sequelize) => {
       },
     },
     context: { queryInterface: sequelize.getQueryInterface(), Sequelize },
-    storage: new SequelizeStorage({
-      sequelize,
-      tableName: 'seeder_meta',
-    }),
+    storage: new SequelizeStorage({ sequelize }),
     logger: console,
   });
 
-  if (process.env.NODE_ENV === 'development') {
-    await seeder.up();
-  }
+  await seeder.up();
 
 };
