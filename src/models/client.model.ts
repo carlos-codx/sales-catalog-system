@@ -13,7 +13,7 @@ interface ClientAttributes {
   deletedAt?: Date | null;
 }
 
-interface ClientCreationAttributes extends Optional<ClientAttributes, 'id' | 'email' | 'deletedAt'> {}
+export interface ClientCreationAttributes extends Optional<ClientAttributes, 'id' | 'email' | 'deletedAt'> {}
 
 export class Client extends Model<ClientAttributes, ClientCreationAttributes> implements ClientAttributes {
   public id!: number;
