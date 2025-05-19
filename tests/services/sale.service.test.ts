@@ -80,22 +80,22 @@ describe('SaleService', () => {
     expect(result).toBe(false);
   });
 
-it('should return failure if a product is missing in productsDB', async () => {
-  const productsInput = [
-    { productId: 1, quantity: 1 },
-    { productId: 2, quantity: 1 },
-  ];
+  it('should return failure if a product is missing in productsDB', async () => {
+    const productsInput = [
+      { productId: 1, quantity: 1 },
+      { productId: 2, quantity: 1 },
+    ];
 
-  mockProductService.findManyByIds.mockResolvedValue([{ id: 1, price: 100 }] as any);
-  mockDiscountService.getDiscountedPrice.mockResolvedValue({ discountAmount: 0, finalPrice: 0 });
+    mockProductService.findManyByIds.mockResolvedValue([{ id: 1, price: 100 }] as any);
+    mockDiscountService.getDiscountedPrice.mockResolvedValue({ discountAmount: 0, finalPrice: 0 });
 
-  const result = await service.registerSale(1, 'CASH', productsInput);
+    const result = await service.registerSale(1, 'CASH', productsInput);
 
-  expect(result).toEqual({
-    success: false,
-    message: 'No se encontraron todos los productos proporcionados',
+    expect(result).toEqual({
+      success: false,
+      message: 'No se encontraron todos los productos proporcionados',
+    });
   });
-});
 
   it('should register a sale successfully', async () => {
     const products = [{ productId: 1, quantity: 2 }];
@@ -129,12 +129,21 @@ it('should return failure if a product is missing in productsDB', async () => {
         },
       ]
     );
+
     expect(result).toEqual({
       success: true,
       message: 'Venta registrada correctamente',
-      sale: mockSale,
+      result: {
+        sale: mockSale,
+        summary: {
+          subtotal: 100,
+          discountTotal: 10, // 5 * 2
+          total: 90,
+        },
+      },
     });
   });
+
 
   it('should return failure if sale creation fails', async () => {
     const products = [{ productId: 1, quantity: 1 }];

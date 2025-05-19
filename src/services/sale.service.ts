@@ -36,10 +36,19 @@ export class SaleService {
   ): Promise<{
     success: boolean;
     message?: string;
-    sale?: Sale;
+    result?: {
+      sale: Sale;
+      summary: {
+        subtotal: number;
+        discountTotal: number;
+        total: number;
+      };
+    };
   }> {
 
     const details = [];
+    let subtotal = 0;
+    let discountTotal = 0;
     let total = 0;
 
     const productsIds = products.map((item) => item.productId);
@@ -58,19 +67,22 @@ export class SaleService {
 
       const { discountAmount, finalPrice } = await this.discountService.getDiscountedPrice(product);
 
-      const subtotal = product.price * item.quantity;
-      const totalLine = finalPrice * item.quantity;
+      const lineSubtotal = product.price * item.quantity;
+      const lineDiscount = discountAmount * item.quantity;
+      const lineTotal = finalPrice * item.quantity;
 
       details.push({
         productId: product.id,
         quantity: item.quantity,
         unitPrice: product.price,
         discount: discountAmount,
-        subtotal,
-        total: totalLine,
+        subtotal: lineSubtotal,
+        total: lineTotal,
       });
 
-      total += totalLine;
+      subtotal += lineSubtotal;
+      discountTotal += lineDiscount;
+      total += lineTotal;
 
     }
 
@@ -93,7 +105,14 @@ export class SaleService {
     return {
       success: true,
       message: 'Venta registrada correctamente',
-      sale,
+      result: {
+        sale,
+        summary: {
+          subtotal,
+          discountTotal,
+          total,
+        },
+      }
     };
 
   }

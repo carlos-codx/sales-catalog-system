@@ -52,7 +52,7 @@ export const createSale = async (req: Request, res: Response): Promise<void> => 
     res.status(201).json({
       status: 201,
       message: 'Venta registrada correctamente',
-      result: registeredSale.sale,
+      result: registeredSale.result,
     });
 
   } catch (error) {
