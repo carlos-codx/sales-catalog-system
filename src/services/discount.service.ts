@@ -22,4 +22,12 @@ export class DiscountService {
     return await this.discountRepo.findOne({ productId });
   }
 
+  async activateDiscount(id: number) {
+    return await this.discountRepo.updateStatus(id, 'ACTIVE');
+  }
+
+  async deactivateDiscount(id: number) {
+    return await this.discountRepo.updateStatus(id, 'INACTIVE');
+  }
+
 }

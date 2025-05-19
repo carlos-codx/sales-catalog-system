@@ -67,4 +67,52 @@ describe('DiscountService', () => {
     expect(mockRepo.findOne).toHaveBeenCalledWith({ productId: 10 });
     expect(result).toEqual(discount);
   });
+
+  it('should activate a discount', async () => {
+    const mockDiscount = {
+      id: 1,
+      status: 'ACTIVE',
+    };
+
+    mockRepo.updateStatus.mockResolvedValue(mockDiscount as any);
+
+    const result = await service.activateDiscount(1);
+
+    expect(mockRepo.updateStatus).toHaveBeenCalledWith(1, 'ACTIVE');
+    expect(result).toEqual(mockDiscount);
+  });
+
+  it('should deactivate a discount', async () => {
+    const mockDiscount = {
+      id: 2,
+      status: 'INACTIVE',
+    };
+
+    mockRepo.updateStatus.mockResolvedValue(mockDiscount as any);
+
+    const result = await service.deactivateDiscount(2);
+
+    expect(mockRepo.updateStatus).toHaveBeenCalledWith(2, 'INACTIVE');
+    expect(result).toEqual(mockDiscount);
+  });
+
+  it('should return null if discount not found when activating', async () => {
+    mockRepo.updateStatus.mockResolvedValue(null);
+
+    const result = await service.activateDiscount(999);
+
+    expect(mockRepo.updateStatus).toHaveBeenCalledWith(999, 'ACTIVE');
+    expect(result).toBeNull();
+  });
+
+  it('should return null if discount not found when deactivating', async () => {
+    mockRepo.updateStatus.mockResolvedValue(null);
+
+    const result = await service.deactivateDiscount(888);
+
+    expect(mockRepo.updateStatus).toHaveBeenCalledWith(888, 'INACTIVE');
+    expect(result).toBeNull();
+  });
+
+
 });

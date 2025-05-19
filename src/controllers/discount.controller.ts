@@ -51,3 +51,72 @@ export const createDiscount = async (req: Request, res: Response): Promise<void>
   }
 
 };
+
+export const activateDiscount = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const discount = await discountService.activateDiscount(id);
+
+    if (!discount) {
+      res.status(404).json({
+        message: 'Descuento no encontrado',
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: 'Descuento activado correctamente',
+      status: 200,
+      error: false,
+    });
+
+  } catch (error) {
+
+    console.error('Validation error:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al activar el descuento',
+      status: 500,
+      error: true,
+    });
+
+  }
+
+};
+
+export const deactivateDiscount = async (req: Request, res: Response): Promise<void> => {
+
+  try {
+
+    const id = parseInt(req.params.id);
+    const discount = await discountService.deactivateDiscount(id);
+
+    if (!discount) {
+      res.status(404).json({
+        message: 'Descuento no encontrado',
+        status: 404,
+        error: true,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      message: 'Descuento desactivado correctamente',
+      status: 200,
+      error: false,
+    });
+
+  } catch (error) {
+
+    console.error('Validation error:', error);
+    res.status(500).json({
+      message: 'Ha ocurrido un error inesperado al desactivar el descuento',
+      status: 500,
+      error: true,
+    });
+
+  }
+};

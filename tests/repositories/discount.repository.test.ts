@@ -61,4 +61,34 @@ describe('DiscountRepository', () => {
 
     expect(result).toBeNull();
   });
+
+  it('should update discount status if found', async () => {
+    const mockDiscount = {
+      id: 1,
+      status: 'INACTIVE',
+      save: jest.fn().mockResolvedValue(undefined),
+    };
+
+    (Discount.findByPk as jest.Mock).mockResolvedValue(mockDiscount);
+
+    const repo = new DiscountRepository();
+    const result = await repo.updateStatus(1, 'ACTIVE');
+
+    expect(Discount.findByPk).toHaveBeenCalledWith(1);
+    expect(mockDiscount.status).toBe('ACTIVE');
+    expect(mockDiscount.save).toHaveBeenCalled();
+    expect(result).toBe(mockDiscount);
+  });
+
+  it('should return null if discount is not found by id', async () => {
+    (Discount.findByPk as jest.Mock).mockResolvedValue(null);
+
+    const repo = new DiscountRepository();
+    const result = await repo.updateStatus(999, 'INACTIVE');
+
+    expect(Discount.findByPk).toHaveBeenCalledWith(999);
+    expect(result).toBeNull();
+  });
+
+
 });

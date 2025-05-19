@@ -13,4 +13,13 @@ export class DiscountRepository {
     });
   }
 
+  async updateStatus(id: number, status: 'ACTIVE' | 'INACTIVE'): Promise<Discount | null> {
+    const discount = await Discount.findByPk(id);
+    if (!discount) return null;
+
+    discount.status = status;
+    await discount.save();
+    return discount;
+  }
+
 }
